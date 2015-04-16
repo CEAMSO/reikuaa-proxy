@@ -1,0 +1,29 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index()
+
+#API de usuario
+POST    /usuario                   controllers.UsuarioController.registrar()
+PUT    /usuario                    controllers.UsuarioController.actualizar()
+DELETE    /usuario                 controllers.UsuarioController.eliminar()
+
+#API de EventoUsuario
+POST    /eventos/suscripcion       controllers.EventoUsuarioController.actualizarEventosUsuario()
+
+#Token
+GET     /token                      controllers.OauthController.generateAccessToken()
+
+#Suscripcion
+POST    /licitaciones/:planificacion_id/suscripcion           controllers.SuscripcionController.registrarSuscripcion(planificacion_id: String)
+DELETE    /licitaciones/:planificacion_id/suscripcion           controllers.SuscripcionController.eliminarSuscripcion(planificacion_id: String)
+GET       /licitaciones/suscripcion                             controllers.SuscripcionController.getSuscripciones()
+
+#Proveedor
+GET     /proveedor/:ruc                                         controllers.ProveedorController.getSlugProveedor(ruc: String)
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+
