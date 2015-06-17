@@ -32,7 +32,7 @@ public class UsuarioController extends ServiceController {
             facade.registrar(reg);
 
         }catch(Exception e){
-            e.printStackTrace();
+           play.Logger.error(e.getMessage());
             return internalServerError("Error al registrar los datos, por favor intente de nuevo.");
         }
 
@@ -45,7 +45,7 @@ public class UsuarioController extends ServiceController {
      */
     @Security.Authenticated(BasicDispositivoAutenticator.class)
     public static Result eliminar() {
-        System.out.println("-------------ELIMINAR USUARIO---------");
+        play.Logger.info("-------------ELIMINAR USUARIO---------");
         try {
             Dispositivo dispositivo = Form.form(Dispositivo.class).bindFromRequest().get();
             UsuarioFacade facade = getInstance(UsuarioFacade.class);
@@ -64,14 +64,14 @@ public class UsuarioController extends ServiceController {
      */
     @Security.Authenticated(BasicAuthenticator.class)
     public static Result actualizar() {
-        System.out.println("-------------ACTUALIZAR DATOS DEL USUARIO---------");
+       play.Logger.info("-------------ACTUALIZAR DATOS DEL USUARIO---------");
         try {
             Dispositivo dispositivo = Form.form(Dispositivo.class).bindFromRequest().get();
             String registrationId = flash(Dispositivo.Field.REGISTRATION_ID);
             UsuarioFacade facade = getInstance(UsuarioFacade.class);
             facade.actualizarRegistrationId(dispositivo, registrationId);
         }catch(Exception e){
-            e.printStackTrace();
+            play.Logger.error(e.getMessage());
             return internalServerError("Error al actualizar los datos, por favor intente de nuevo.");
         }
 

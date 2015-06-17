@@ -3,115 +3,132 @@
 
 # --- !Ups
 
-create table notificacion.dispositivos (
-  id                        integer not null,
+create table notificacion.dispositivo (
+  id                        bigserial not null not null,
   registration_id           varchar(255),
   tipo_dispositivo          varchar(255),
-  usuario_id                integer not null,
-  constraint pk_dispositivos primary key (id))
+  usuario_id                bigserial not null not null,
+  constraint pk_dispositivo primary key (id))
 ;
 
-create table notificacion.eventos (
-  id                        integer not null,
-  planificacion_id          varchar(255),
-  tipo_evento_id            integer not null,
+create table notificacion.evento (
+  id                        bigserial not null not null,
+  licitacion_planificacion_id character varying(255) not null,
+  tipo_evento_id            bigserial not null not null,
   descripcion               varchar(255),
-  constraint pk_eventos primary key (id))
+  notificado_android        boolean,
+  notificacion_ios          boolean,
+  constraint pk_evento primary key (id))
 ;
 
 create table notificacion.evento_usuario (
-  id                        integer not null,
-  usuario_id                integer not null,
-  tipo_evento_id            integer not null,
+  id                        bigserial not null not null,
+  usuario_id                bigserial not null not null,
+  grupo_evento_id           bigserial not null not null,
   constraint pk_evento_usuario primary key (id))
 ;
 
-create table notificacion.notificaciones (
-  id                        integer not null,
-  dispositivo_id            integer not null,
-  evento_id                 integer not null,
-  notificado                boolean,
-  constraint pk_notificaciones primary key (id))
-;
-
-create table notificacion.suscripciones (
-  id                        bigint not null,
-  usuario_id                integer not null,
-  planificacion_id          varchar(255) not null,
-  constraint pk_suscripciones primary key (id))
-;
-
-create table notificacion.tipo_eventos (
-  id                        integer not null,
+create table notificacion.grupo_evento (
+  id                        bigserial not null not null,
   descripcion               varchar(255),
-  template                  varchar(255),
-  constraint pk_tipo_eventos primary key (id))
+  constraint pk_grupo_evento primary key (id))
 ;
 
-create table notificacion.usuarios (
-  id                        integer not null,
-  mail                      varchar(255),
-  constraint pk_usuarios primary key (id))
+create table notificacion.notificacion_log (
+  id                        bigserial not null not null,
+  fecha_registro_id         timestamp without time zone not null,
+  evento_id                 bigserial not null not null,
+  error                     varchar(255),
+  message_id                varchar(255),
+  registration_id           varchar(255),
+  constraint pk_notificacion_log primary key (id))
 ;
 
-create sequence notificacion.dispositivos_seq;
+create table notificacion.suscripcion (
+  id                        bigserial not null not null,
+  usuario_id                bigserial not null not null,
+  licitacion_planificacion_id character varying(255) not null,
+  constraint pk_suscripcion primary key (id))
+;
 
-create sequence evento_id_seq;
+create table notificacion.tipo_evento (
+  id                        bigserial not null not null,
+  descripcion               varchar(255),
+  nombre                    varchar(255),
+  grupo_evento_id           bigserial not null,
+  constraint pk_tipo_evento primary key (id))
+;
+
+create table notificacion.usuario (
+  id                        bigserial not null not null,
+  identificador             character varying(255) not null,
+  constraint pk_usuario primary key (id))
+;
+
+create sequence notificacion.dispositivo_seq;
+
+create sequence notificacion.evento_seq;
 
 create sequence notificacion.evento_usuario_seq;
 
-create sequence notificacion.notificaciones_seq;
+create sequence notificacion.grupo_evento_seq;
 
-create sequence notificacion.suscripciones_seq;
+create sequence notificacion.notificacion_log_seq;
 
-create sequence notificacion.tipo_eventos_seq;
+create sequence notificacion.suscripcion_seq;
 
-create sequence notificacion.usuarios_seq;
+create sequence notificacion.tipo_evento_seq;
 
-alter table notificacion.dispositivos add constraint fk_notificacion.dispositivos_u_1 foreign key (usuario_id) references notificacion.usuarios (id);
-create index ix_notificacion.dispositivos_u_1 on notificacion.dispositivos (usuario_id);
-alter table notificacion.eventos add constraint fk_notificacion.eventos_tipoEv_2 foreign key (tipo_evento_id) references notificacion.tipo_eventos (id);
-create index ix_notificacion.eventos_tipoEv_2 on notificacion.eventos (tipo_evento_id);
-alter table notificacion.evento_usuario add constraint fk_notificacion.evento_usuario_3 foreign key (usuario_id) references notificacion.usuarios (id);
+create sequence notificacion.usuario_seq;
+
+alter table notificacion.dispositivo add constraint fk_notificacion.dispositivo_us_1 foreign key (usuario_id) references notificacion.usuario (id);
+create index ix_notificacion.dispositivo_us_1 on notificacion.dispositivo (usuario_id);
+alter table notificacion.evento add constraint fk_notificacion.evento_tipoEve_2 foreign key (tipo_evento_id) references notificacion.tipo_evento (id);
+create index ix_notificacion.evento_tipoEve_2 on notificacion.evento (tipo_evento_id);
+alter table notificacion.evento_usuario add constraint fk_notificacion.evento_usuario_3 foreign key (usuario_id) references notificacion.usuario (id);
 create index ix_notificacion.evento_usuario_3 on notificacion.evento_usuario (usuario_id);
-alter table notificacion.evento_usuario add constraint fk_notificacion.evento_usuario_4 foreign key (tipo_evento_id) references notificacion.tipo_eventos (id);
-create index ix_notificacion.evento_usuario_4 on notificacion.evento_usuario (tipo_evento_id);
-alter table notificacion.notificaciones add constraint fk_notificacion.notificaciones_5 foreign key (dispositivo_id) references notificacion.dispositivos (id);
-create index ix_notificacion.notificaciones_5 on notificacion.notificaciones (dispositivo_id);
-alter table notificacion.notificaciones add constraint fk_notificacion.notificaciones_6 foreign key (evento_id) references notificacion.eventos (id);
-create index ix_notificacion.notificaciones_6 on notificacion.notificaciones (evento_id);
-alter table notificacion.suscripciones add constraint fk_notificacion.suscripciones__7 foreign key (usuario_id) references notificacion.usuarios (id);
-create index ix_notificacion.suscripciones__7 on notificacion.suscripciones (usuario_id);
+alter table notificacion.evento_usuario add constraint fk_notificacion.evento_usuario_4 foreign key (grupo_evento_id) references notificacion.grupo_evento (id);
+create index ix_notificacion.evento_usuario_4 on notificacion.evento_usuario (grupo_evento_id);
+alter table notificacion.notificacion_log add constraint fk_notificacion.notificacion_l_5 foreign key (evento_id) references notificacion.evento (id);
+create index ix_notificacion.notificacion_l_5 on notificacion.notificacion_log (evento_id);
+alter table notificacion.suscripcion add constraint fk_notificacion.suscripcion_us_6 foreign key (usuario_id) references notificacion.usuario (id);
+create index ix_notificacion.suscripcion_us_6 on notificacion.suscripcion (usuario_id);
+alter table notificacion.tipo_evento add constraint fk_notificacion.tipo_evento_gr_7 foreign key (grupo_evento_id) references notificacion.grupo_evento (id);
+create index ix_notificacion.tipo_evento_gr_7 on notificacion.tipo_evento (grupo_evento_id);
 
 
 
 # --- !Downs
 
-drop table if exists notificacion.dispositivos cascade;
+drop table if exists notificacion.dispositivo cascade;
 
-drop table if exists notificacion.eventos cascade;
+drop table if exists notificacion.evento cascade;
 
 drop table if exists notificacion.evento_usuario cascade;
 
-drop table if exists notificacion.notificaciones cascade;
+drop table if exists notificacion.grupo_evento cascade;
 
-drop table if exists notificacion.suscripciones cascade;
+drop table if exists notificacion.notificacion_log cascade;
 
-drop table if exists notificacion.tipo_eventos cascade;
+drop table if exists notificacion.suscripcion cascade;
 
-drop table if exists notificacion.usuarios cascade;
+drop table if exists notificacion.tipo_evento cascade;
 
-drop sequence if exists notificacion.dispositivos_seq;
+drop table if exists notificacion.usuario cascade;
 
-drop sequence if exists evento_id_seq;
+drop sequence if exists notificacion.dispositivo_seq;
+
+drop sequence if exists notificacion.evento_seq;
 
 drop sequence if exists notificacion.evento_usuario_seq;
 
-drop sequence if exists notificacion.notificaciones_seq;
+drop sequence if exists notificacion.grupo_evento_seq;
 
-drop sequence if exists notificacion.suscripciones_seq;
+drop sequence if exists notificacion.notificacion_log_seq;
 
-drop sequence if exists notificacion.tipo_eventos_seq;
+drop sequence if exists notificacion.suscripcion_seq;
 
-drop sequence if exists notificacion.usuarios_seq;
+drop sequence if exists notificacion.tipo_evento_seq;
+
+drop sequence if exists notificacion.usuario_seq;
 

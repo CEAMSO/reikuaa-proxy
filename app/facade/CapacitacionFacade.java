@@ -1,25 +1,34 @@
 package facade;
 
-import dao.OauthDao;
+import configurations.Parametro;
+import dao.CapacitacionDAO;
 import play.libs.F;
 import play.libs.WS;
+import py.gov.dncp.ws.exception.FacadeException;
 import py.gov.dncp.ws.framework.BaseFacade;
 import py.gov.dncp.ws.framework.FacadeResponse;
-import py.gov.dncp.ws.exception.FacadeException;
-/**
- * Created by gaby.lorely on 08/03/2015.
- */
-public class OauthFacade extends BaseFacade {
+import sun.misc.BASE64Encoder;
 
-    OauthDao dao = getInstance(OauthDao.class);
+/**
+ * Created by gaby.lorely on 22/05/2015.
+ */
+public class CapacitacionFacade extends BaseFacade {
+
+    CapacitacionDAO dao = getInstance(CapacitacionDAO.class);
 
     /**
      * Obtiene el access token requerido por un telefono registrado
      *
      * @return una promesa del response
      */
-    public F.Promise<FacadeResponse> getAccessToken() {
-        final F.Promise<WS.Response> llamadoPromise = dao.getOauthAccessToken();
+    public F.Promise<FacadeResponse> getCapacitaciones(String offset, String limit) {
+        if(offset == null){
+            offset = "0";
+        }
+        if(limit == null){
+            limit ="10";
+        }
+        final F.Promise<WS.Response> llamadoPromise = dao.getUltimasCapacitaciones(offset, limit);
 
         return llamadoPromise
                 .map(new F.Function<WS.Response, FacadeResponse>() {
@@ -29,10 +38,10 @@ public class OauthFacade extends BaseFacade {
                             case 404:
                                 return new FacadeResponse(null);
                             case 200:
+                               // play.Logger.info("Json de Respuesta Capacitaciones: " + response.asJson().textValue());
                                 return new FacadeResponse(
                                         response.asJson());
                             default:
-                                play.Logger.error("Error al obtener respuesta del servicio externo");
                                 throw new FacadeException(
                                         "Respuesta inesperada del servidor");
                         }

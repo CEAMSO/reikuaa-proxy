@@ -11,7 +11,10 @@ import autenticacion.BasicAuthenticator;
 import facade.EventoUsuarioFacade;
 import facade.SuscripcionFacade;
 import models.EventoUsuario;
+import models.GrupoEvento;
 import models.TipoEvento;
+import models.Usuario;
+import play.Logger;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -33,25 +36,26 @@ public class EventoUsuarioController extends ServiceController {
     @Security.Authenticated(BasicAuthenticator.class)
     public static Result actualizarEventosUsuario() {
         try {
-            String mail = flash("mail");
+            String id = flash(Usuario.Field.IDENTIFICADOR);
 
-            System.out.println("----LLAMADA A REGISTRAR EVENTOUSUARIO PARA: " + mail);
+            System.out.println("----LLAMADA A REGISTRAR EVENTOUSUARIO PARA: " + id);
 
             ObjectMapper mapper = new ObjectMapper();
 
             JsonNode json = request().body().asJson();
-            System.out.println("JSON: " + String.valueOf(json));
-            //List<TipoEvento> tipoEventos = mapper.readValue(json.asText(), new TypeReference<List<TipoEvento>>() { });
-            List<TipoEvento> objects = new ObjectMapper().readValue(String.valueOf(json), new TypeReference<List<TipoEvento>>(){});
-            for(TipoEvento e: objects){
-                System.out.println("TIIPO EVENTO: " + e.getId());
+            Logger.info("JSON: " + String.valueOf(json));
+            List<GrupoEvento> objects = new ObjectMapper().readValue(String.valueOf(json), new TypeReference<List<GrupoEvento>>(){});
+
+            for(GrupoEvento e: objects){
+                Logger.info("TIIPO EVENTO: " + e.getId());
             }
+
             EventoUsuarioFacade facade = getInstance(EventoUsuarioFacade.class);
 
-            facade.registrar(mail, objects);
+            facade.registrar(id, objects);
 
         }catch(Exception e){
-            e.printStackTrace();
+            Logger.error(e.getMessage());
             return internalServerError("Error al registrar los datos, por favor intente de nuevo.");
         }
 

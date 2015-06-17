@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Dispositivo;
 import models.EventoUsuario;
-import models.TipoEvento;
 import models.Usuario;
 
 /**
@@ -25,12 +23,11 @@ public class EventoUsuarioDAO {
 
 //        map.put(EventoUsuario.Field.ID, eventoUsuario.getUsuario().getId());
 //        map.put(EventoUsuario.Field.TIPOEVENTO, eventoUsuario.getTipoEvento().getId());
-        map.put(EventoUsuario.Field.USUARIO_ID, eventoUsuario.getUsuario().getId());
+        map.put(EventoUsuario.Field.USUARIO + "." + Usuario.Field.ID, eventoUsuario.getUsuario().getId());
         List<EventoUsuario> eventos = EventoUsuario.find.where().allEq(map).findList();
         for (EventoUsuario evento : eventos) {
             if (evento != null)
                 evento.delete();
         }
     }
-
 }

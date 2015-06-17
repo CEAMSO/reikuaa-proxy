@@ -3,6 +3,7 @@ package models;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +22,7 @@ import play.db.ebean.Model;
  * Created by gaby.lorely on 01/03/2015.
  */
 @Entity
-@Table(name = "dispositivos", schema="notificacion")
+@Table(name = "dispositivo", schema = "notificacion")
 public class Dispositivo extends Model {
 
     public static class Field {
@@ -29,30 +30,25 @@ public class Dispositivo extends Model {
         public static final String REGISTRATION_ID = "registrationId";
         public static final String TIPO_DISPOSITIVO = "tipoDispositivo";
         public static final String USUARIO = "usuario";
-        public static final String MAIL = "mail";
+        public static final String IDENTIFICADOR = "identificador";
     }
 
     @Id
-    public Integer id;
+    @Column(columnDefinition = "bigserial not null")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="notificacion.dispositivo_id_seq")
+    public Long id;
 
     public String registrationId;
 
     public String tipoDispositivo;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    @Column(columnDefinition = "bigint not null")
     private Usuario usuario;
 
     @Transient
-    private String mail;
+    private String identificador;
 
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
 
     public Usuario getUsuario() {
         return usuario;
@@ -62,16 +58,16 @@ public class Dispositivo extends Model {
         this.usuario = usuario;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public static Finder<Integer, Dispositivo> find = new Finder<Integer, Dispositivo>(
-            Integer.class, Dispositivo.class
+    public static Finder<Long, Dispositivo> find = new Finder<Long, Dispositivo>(
+            Long.class, Dispositivo.class
     );
 
     public String getRegistrationId() {
@@ -90,6 +86,12 @@ public class Dispositivo extends Model {
         this.tipoDispositivo = tipoDispositivo;
     }
 
+    public String getIdentificador() {
+        return identificador;
+    }
 
+    public void setIdentificador(String identificador) {
+        this.identificador = identificador;
+    }
 
 }

@@ -1,5 +1,6 @@
 package controllers;
 
+
 import javax.ws.rs.PathParam;
 
 import autenticacion.BasicAuthenticator;
@@ -7,6 +8,7 @@ import facade.DispositivoFacade;
 import facade.OauthFacade;
 import facade.SuscripcionFacade;
 import models.Dispositivo;
+import models.Evento;
 import models.Usuario;
 import play.data.Form;
 import play.libs.F;
@@ -22,13 +24,13 @@ import py.gov.dncp.ws.framework.ServiceController;
 public class SuscripcionController extends ServiceController {
 
     @Security.Authenticated(BasicAuthenticator.class)
-    public static Result registrarSuscripcion( @PathParam("planificacion_id") String planificacionId){
-        System.out.println("----LLAMADA A REGISTRAR SUSCRIPCION PARA: " + flash("mail") + " planificacionId: " + planificacionId);
-        String mail = flash("mail");
+    public static Result registrarSuscripcion(@PathParam("planificacion_id") String planificacion_id){
+        System.out.println("----LLAMADA A REGISTRAR SUSCRIPCION PARA: " + flash(Usuario.Field.IDENTIFICADOR) + " planificacion_id: " + planificacion_id);
+        String mail = flash(Usuario.Field.IDENTIFICADOR);
 
         try {
             SuscripcionFacade facade = getInstance(SuscripcionFacade.class);
-            facade.registrar(mail, planificacionId);
+            facade.registrar(mail, planificacion_id);
         }catch(Exception e){
             e.printStackTrace();
             return internalServerError("Error al registrar los datos, por favor intente de nuevo.");
@@ -40,16 +42,17 @@ public class SuscripcionController extends ServiceController {
     }
 
     @Security.Authenticated(BasicAuthenticator.class)
-    public static Result eliminarSuscripcion( @PathParam("planificacion_id") String planificacionId){
+    public static Result eliminarSuscripcion( @PathParam("planificacion_id") String planificacion_id){
 
-        String mail = flash("mail");
-        System.out.println("----LLAMADA A ELIMINAR SUSCRIPCION PARA: " + mail + " convocatoria: " + planificacionId);
+        String mail = flash(Usuario.Field.IDENTIFICADOR);
+
+        System.out.println("----LLAMADA A ELIMINAR SUSCRIPCION PARA: " + mail + " convocatoria: " + planificacion_id);
 
         try {
             SuscripcionFacade facade = getInstance(SuscripcionFacade.class);
-            facade.eliminar(mail, planificacionId);
+            facade.eliminar(mail, planificacion_id);
         }catch(Exception e){
-            e.printStackTrace();
+            play.Logger.error(e.getMessage());
             return internalServerError("Error al eliminar suscripcion, por favor intente de nuevo.");
         }
 
@@ -62,7 +65,7 @@ public class SuscripcionController extends ServiceController {
     public static Result getSuscripciones(){
 
         String mail = flash("mail");
-        System.out.println("----LLAMADA A GET  SUSCRIPCIONES PARA: " + mail );
+        play.Logger.info("----LLAMADA A GET  SUSCRIPCIONES PARA: " + mail );
 
         return ok();
 

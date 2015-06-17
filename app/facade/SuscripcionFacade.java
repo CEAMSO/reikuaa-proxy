@@ -1,8 +1,6 @@
 package facade;
 
-import dao.DispositivoDao;
 import dao.SuscripcionDao;
-import models.Dispositivo;
 import models.Suscripcion;
 import models.Usuario;
 import py.gov.dncp.ws.framework.BaseFacade;
@@ -19,36 +17,46 @@ public class SuscripcionFacade extends BaseFacade {
     /**
      * Registra una suscripción de un usuario a una planificacion
      * @param planificacionId id de la planificacion
-     * @param mail mail del dispositivo a suscribir
+     * @param identificador mail del dispositivo a suscribir
      * @return
      * @throws Exception
      */
-    public Suscripcion registrar( String mail, String planificacionId) throws Exception{
-        Usuario user = usuarioFacade.getByMail(mail);
+    public Suscripcion registrar( String identificador, String planificacionId) throws Exception{
+        Usuario user = usuarioFacade.getByIdentificador(identificador);
 
-        if(dao.get(user, planificacionId) == null) {
+        if (dao.get(user, planificacionId) == null) {
             Suscripcion suscripcion = new Suscripcion();
             suscripcion.setPlanificacionId(planificacionId);
             suscripcion.setUsuario(user);
 
             return dao.persist(suscripcion);
         }
+
         return null;
     }
 
     /**
      * Elimina una suscripción de un usuario a una planificacion
      * @param planificacionId id de la planificacion
-     * @param mail mail del dispositivo a suscribir
+     * @param identificador mail del dispositivo a suscribir
      * @return
      * @throws Exception
      */
-    public void eliminar( String mail, String planificacionId) throws Exception{
-        Usuario user = usuarioFacade.getByMail(mail);
-        Suscripcion suscripcion = new Suscripcion();
-        suscripcion.setPlanificacionId(planificacionId);
-        suscripcion.setUsuario(user);
+    public void eliminar( String identificador, String planificacionId) throws Exception{
+        Usuario user = usuarioFacade.getByIdentificador(identificador);
+        Suscripcion suscripcion = dao.get(user,planificacionId);
 
-        dao.delete(suscripcion);
+        Boolean eliminar = false;
+        if(suscripcion != null) {
+
+            play.Logger.info("----ELIMINANDO SUSCRIPCION----");
+            dao.delete(suscripcion);
+            play.Logger.info("----SUSCRIPCION ELIMINADA----");
+
+
+        }
+
     }
+
+
 }

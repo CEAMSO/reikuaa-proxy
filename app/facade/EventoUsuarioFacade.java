@@ -3,7 +3,9 @@ package facade;
 import java.util.List;
 
 import dao.EventoUsuarioDAO;
+import dao.TipoEventoDAO;
 import models.EventoUsuario;
+import models.GrupoEvento;
 import models.TipoEvento;
 import models.Usuario;
 import py.gov.dncp.ws.framework.BaseFacade;
@@ -17,24 +19,28 @@ public class EventoUsuarioFacade extends BaseFacade {
 
     UsuarioFacade usuarioFacade = getInstance(UsuarioFacade.class);
 
+    GrupoEventoFacade grupoEventoDAO = getInstance(GrupoEventoFacade.class);
+
     /**
      *
-     * @param mail
-     * @param tiposEventos
+     * @param identificador
+     * @param gruposEventos
      * @return
      * @throws Exception
      */
-    public void registrar( String mail, List<TipoEvento> tiposEventos) throws Exception{
-        Usuario usuario = usuarioFacade.getByMail(mail);
+    public void registrar( String identificador, List<GrupoEvento> gruposEventos) throws Exception{
+        Usuario usuario = usuarioFacade.getByIdentificador(identificador);
         EventoUsuario eventoUsuarioABorrar = new EventoUsuario();
         eventoUsuarioABorrar.setUsuario(usuario);
         dao.delete(eventoUsuarioABorrar);
-
-        for ( TipoEvento tipoEvento : tiposEventos ) {
+        for ( GrupoEvento grupo : gruposEventos ) {
             EventoUsuario eventoUsuario = new EventoUsuario();
-            eventoUsuario.setUsuario(usuario);
-            eventoUsuario.setTipoEvento(tipoEvento);
-            dao.persist(eventoUsuario);
+            grupo = grupoEventoDAO.get(grupo.getId());
+            if(grupo != null) {
+                eventoUsuario.setUsuario(usuario);
+                eventoUsuario.setGrupoEvento(grupo);
+                dao.persist(eventoUsuario);
+            }
         }
     }
 }

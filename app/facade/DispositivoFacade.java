@@ -52,4 +52,6 @@ public class DispositivoFacade extends BaseFacade {
     public void update(Dispositivo d) {
         dao.update(d);
     }
+
+
 }

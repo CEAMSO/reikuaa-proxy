@@ -1,0 +1,37 @@
+# Users
+
+grupoEventos:
+
+    - &cambioEstado !!models.GrupoEvento
+            id: 1
+            descripcion: Cualquier cambio de estado en el ciclo de vida de la licitación
+
+    - &modificacionAclaraciones !!models.GrupoEvento
+           id: 2
+           descripcion:  Modificaciones que sufren los documentos de la licitación
+
+tipoEventos:
+
+    - &estado !!models.TipoEvento
+            id: 1
+            nombre: Estados de la Convocatoria
+            descripcion: Cambios de estado durante la etapa de convocatoria
+            grupoEvento: *cambioEstado
+
+    - &adenda !!models.TipoEvento
+           id: 2
+           nombre: Nueva Adenda para el pliego
+           descripcion:  Modificaciones que sufren los documentos del pliego de bases y condiciones
+           grupoEvento: *modificacionAclaraciones
+
+    - &prorroga !!models.TipoEvento
+          id: 4
+          nombre: Nueva Prórroga para el pliego
+          descripcion:  Modificaciones en las fechas presentadas en el pliego de bases y condiciones
+          grupoEvento: *modificacionAclaraciones
+
+    - &aclaracion !!models.TipoEvento
+           id: 5
+           nombre: Nueva Aclaración para el pliego
+           descripcion:  Documentos que para esclarecer puntos específicos del pliego de bases y condiciones
+           grupoEvento: *modificacionAclaraciones

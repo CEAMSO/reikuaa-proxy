@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
@@ -18,22 +21,33 @@ import play.db.ebean.Model;
  * Created by gaby.lorely on 01/03/2015.
  */
 @Entity
-@Table(name = "usuarios", schema="notificacion")
+@Table(name = "usuario", schema = "notificacion")
 public class Usuario extends Model {
 
     public static class Field {
         public static final String ID = "id";
         public static final String DISPOSITIVOS = "dispositivos";
-        public static final String MAIL = "mail";
+        public static final String IDENTIFICADOR = "identificador";
+        public static final String EVENTO_USUARIOS = "eventoUsuarios";
+        public static final String SUSCRIPCIONES = "suscripciones";
     }
 
     @Id
-    public Integer id;
+    @Column(columnDefinition = "bigserial not null")
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="notificacion.usuario_id_seq")
+    public Long id;
 
-    public String mail;
+    @Column(columnDefinition = "character varying(255) not null")
+    public String identificador;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuario",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Dispositivo> dispositivos;
+
+    @OneToMany(mappedBy = "usuario", fetch =FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<EventoUsuario> eventoUsuarios;
+
+    @OneToMany(mappedBy = "usuario",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Suscripcion> suscripciones;
 
     public List<Dispositivo> getDispositivos() {
         return dispositivos;
@@ -43,25 +57,32 @@ public class Usuario extends Model {
         this.dispositivos = dispositivos;
     }
 
-    public String getMail() {
-        return mail;
+    public String getIdentificador() {
+        return identificador;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setIdentificador(String identificador) {
+        this.identificador = identificador;
     }
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public static Finder<Integer, Usuario> find = new Finder<Integer, Usuario>(
-            Integer.class, Usuario.class
+    public static Finder<Long, Usuario> find = new Finder<Long, Usuario>(
+            Long.class, Usuario.class
     );
+
+    public List<EventoUsuario> getEventoUsuarios() {
+        return eventoUsuarios;
+    }
+
+    public void setEventoUsuarios(List<EventoUsuario> eventoUsuarios) {
+        this.eventoUsuarios = eventoUsuarios;
+    }
 
     public Usuario(){
         super();

@@ -3,7 +3,6 @@ package dao;
 import java.util.HashMap;
 import java.util.Map;
 
-import models.Dispositivo;
 import models.Suscripcion;
 import models.Usuario;
 
@@ -12,6 +11,7 @@ import models.Usuario;
  * Created by gaby.lorely on 22/03/2015.
  */
 public class SuscripcionDao {
+
 
     public Suscripcion persist (Suscripcion suscripcion){
         suscripcion.save();
@@ -26,7 +26,7 @@ public class SuscripcionDao {
 
         Map<String, Object> map = new HashMap<String,Object>();
         map.put(Suscripcion.Field.USUARIO + "." + Usuario.Field.ID, suscripcion.getUsuario().getId());
-        map.put(Suscripcion.Field.PLANIFICACION_ID, suscripcion.getPlanificacionId());
+        map.put(Suscripcion.Field.PLANIFICACION_ID , suscripcion.getPlanificacionId());
 
         Suscripcion susc = Suscripcion.find.where().allEq(map).findUnique();
         susc.delete();

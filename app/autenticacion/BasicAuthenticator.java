@@ -3,11 +3,10 @@ package autenticacion;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-import dao.DispositivoDao;
 import models.Dispositivo;
 import models.Usuario;
+import play.Logger;
 import play.mvc.Http;
 import play.mvc.Security;
 
@@ -25,19 +24,19 @@ public class BasicAuthenticator extends Security.Authenticator {
     @Override
     public String getUsername(Http.Context ctx) {
         Map<String,Object> header = getAuthenticationParams(ctx);
-        System.out.println("AUTENTICANDO DISPOSITIVO PETICION " + ctx.request().uri() + " " + ctx.request().method());
+        Logger.info("AUTENTICANDO DISPOSITIVO PETICION " + ctx.request().uri() + " " + ctx.request().method());
 
         if (header != null) {
             Map<String,Object> map = new HashMap<String, Object>();
-            map.put(Dispositivo.Field.USUARIO + "." + Dispositivo.Field.MAIL , header.get("usuario"));
+            map.put(Dispositivo.Field.USUARIO + "." + Dispositivo.Field.IDENTIFICADOR , header.get("usuario"));
             map.put(Dispositivo.Field.REGISTRATION_ID, header.get("password"));
 
             Dispositivo dispositivo = Dispositivo.find.where().allEq(map).findUnique();
             System.out.println("Dispositivo encontrado: " + dispositivo);
             if (dispositivo != null) {
-                flash(Usuario.Field.MAIL, (String)header.get("usuario"));
+                flash(Usuario.Field.IDENTIFICADOR, (String)header.get("usuario"));
                 flash(Dispositivo.Field.REGISTRATION_ID, (String) header.get("password"));
-                System.out.println("RETORNANDO BASIC AUTHENTICATOR");
+                Logger.info("RETORNANDO BASIC AUTHENTICATOR");
                 return (String)header.get("usuario");
             }
         }
@@ -62,17 +61,22 @@ public class BasicAuthenticator extends Security.Authenticator {
         try {
             decodedAuth = new sun.misc.BASE64Decoder().decodeBuffer(auth);
             String[] credString = new String(decodedAuth, "UTF-8").split(":");
-            if (credString == null || credString.length != 2) {
+            if (credString == null ) {
                 return null;
             }
 
             String username = credString[0];
             String password = credString[1];
+            if(credString.length > 1) {
+                for (int i = 2; i < credString.length; i++) {
+                    password += ":" + credString[i];
+                }
+            }
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("password", password);
             map.put("usuario", username);
-            System.out.println("CODIGO: " + password);
-            System.out.println("MAIL: " + username);
+            Logger.info("CODIGO: " + password);
+            Logger.info("MAIL: " + username);
             return map;
 
         } catch (IOException e) {

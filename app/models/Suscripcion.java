@@ -18,33 +18,26 @@ import play.db.ebean.Model;
  * Created by gaby.lorely on 14/03/2015.
  */
 @Entity
-@Table(name = "suscripciones", schema="notificacion")
+@Table(name = "suscripcion", schema = "notificacion")
 public class Suscripcion extends Model{
 
     public static class Field {
         public static final String ID = "id";
-        public static final String PLANIFICACION_ID = "planificacionId";
         public static final String USUARIO = "usuario";
+        public static final String PLANIFICACION_ID = "planificacionId";
     }
 
     @Id
+    @Column(columnDefinition = "bigserial not null")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="notificacion.suscripcion_id_seq")
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    @Column(columnDefinition = "bigint not null")
     private Usuario usuario;
 
-    @Column(name = "planificacion_id")
-    @NotNull
+    @Column(name= "licitacion_planificacion_id", columnDefinition = "character varying(255) not null")
     private String planificacionId;
-
-    public String getPlanificacionId() {
-        return planificacionId;
-    }
-
-    public void setPlanificacionId(String planificacionId) {
-        this.planificacionId = planificacionId;
-    }
 
     public Usuario getUsuario() {
         return usuario;
@@ -62,9 +55,16 @@ public class Suscripcion extends Model{
         this.id = id;
     }
 
-    public static Finder<Integer, Suscripcion> find = new Finder<Integer, Suscripcion>(
-            Integer.class, Suscripcion.class
+    public static Finder<Long, Suscripcion> find = new Finder<Long, Suscripcion>(
+            Long.class, Suscripcion.class
     );
+    public String getPlanificacionId() {
+        return planificacionId;
+    }
+
+    public void setPlanificacionId(String planificacionId) {
+        this.planificacionId = planificacionId;
+    }
 
 
 

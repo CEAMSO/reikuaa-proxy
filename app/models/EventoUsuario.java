@@ -1,6 +1,9 @@
 package models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,26 +16,27 @@ import play.db.ebean.Model;
  * Created by gaby.lorely on 14/03/2015.
  */
 @Entity
-@Table(name = "evento_usuario", schema="notificacion")
+@Table(name = "evento_usuario", schema = "notificacion")
 public class EventoUsuario extends Model {
 
     public static class Field {
         public static final String ID = "id";
         public static final String USUARIO = "usuario";
-        public static final String USUARIO_ID = "usuario.id";
-        public static final String TIPOEVENTO = "tipoEvento";
+        public static final String GRUPO_EVENTO = "grupoEvento";
     }
 
     @Id
-    public Integer id;
+    @Column(columnDefinition = "bigserial not null")
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="notificacion.evento_usuario_id_seq")
+    public Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    @Column(columnDefinition = "bigint not null")
     private Usuario usuario;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "tipo_evento_id", referencedColumnName = "id")
-    private TipoEvento tipoEvento;
+    @Column(columnDefinition = "bigint not null")
+    private GrupoEvento grupoEvento;
 
     public Usuario getUsuario() {
         return usuario;
@@ -41,24 +45,24 @@ public class EventoUsuario extends Model {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-    public TipoEvento getTipoEvento() {
-        return tipoEvento;
-    }
 
-    public void setTipoEvento(TipoEvento tipoEvento) {
-        this.tipoEvento = tipoEvento;
-    }
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public static Finder<Integer, EventoUsuario> find = new Finder<Integer, EventoUsuario>(
-            Integer.class, EventoUsuario.class
+    public GrupoEvento getGrupoEvento() {
+        return grupoEvento;
+    }
+
+    public void setGrupoEvento(GrupoEvento grupoEvento) {
+        this.grupoEvento = grupoEvento;
+    }
+    public static Finder<Long, EventoUsuario> find = new Finder<Long, EventoUsuario>(
+            Long.class, EventoUsuario.class
     );
 
 }

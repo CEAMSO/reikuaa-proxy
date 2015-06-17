@@ -26,7 +26,7 @@ public class DispositivoDao {
         Map<String, Object> map = new HashMap<String,Object>();
         map.put(Dispositivo.Field.REGISTRATION_ID, dispositivo.getRegistrationId());
         map.put(Dispositivo.Field.TIPO_DISPOSITIVO, dispositivo.getTipoDispositivo());
-        map.put(Dispositivo.Field.USUARIO + "." + Usuario.Field.MAIL, dispositivo.getMail());
+        map.put(Dispositivo.Field.USUARIO + "." + Usuario.Field.IDENTIFICADOR, dispositivo.getIdentificador());
 
         Dispositivo user = Dispositivo.find.where().allEq(map).findUnique();
         if(user != null) {
@@ -42,18 +42,18 @@ public class DispositivoDao {
 
     /**
      * Encuentra el dispositivo correspondiente al registration id, mail y tipo dispositivo
-     * @param mail
+     * @param identificador
      * @param registrationId
      * @param tipoDispositivo
      * @return
      */
-    public Dispositivo find(String mail, String registrationId, String tipoDispositivo) {
+    public Dispositivo find(String identificador, String registrationId, String tipoDispositivo) {
         Map<String, Object> map = new HashMap<String,Object>();
         map.put(Dispositivo.Field.REGISTRATION_ID, registrationId);
-        map.put(Dispositivo.Field.USUARIO + "." + Usuario.Field.MAIL, mail);
+        map.put(Dispositivo.Field.USUARIO + "." + Usuario.Field.IDENTIFICADOR, identificador);
         map.put(Dispositivo.Field.TIPO_DISPOSITIVO, tipoDispositivo);
         Dispositivo d = Dispositivo.find.where().allEq(map).findUnique();
-        d.setMail(mail);
+        d.setIdentificador(identificador);
         return d;
     }
 
@@ -66,9 +66,11 @@ public class DispositivoDao {
     public Dispositivo find(String mail, String registrationId) {
         Map<String, Object> map = new HashMap<String,Object>();
         map.put(Dispositivo.Field.REGISTRATION_ID, registrationId);
-        map.put(Dispositivo.Field.USUARIO + "." + Usuario.Field.MAIL, mail);
+        map.put(Dispositivo.Field.USUARIO + "." + Usuario.Field.IDENTIFICADOR, mail);
         Dispositivo d = Dispositivo.find.where().allEq(map).findUnique();
-        d.setMail(mail);
+        d.setIdentificador(mail);
         return d;
     }
+
+
 }

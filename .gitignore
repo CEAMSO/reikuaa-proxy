@@ -13,3 +13,6 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+projectFilesBackup1/.idea/libraries/SBT___scala_compiler_bundle_2_10_3.xml
+projectFilesBackup1/.idea/libraries/SBT__org_scala_lang_scala_library_2_10_3.xml
+projectFilesBackup1/.idea/modules/reikuaa-proxy.iml
